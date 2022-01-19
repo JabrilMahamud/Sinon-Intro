@@ -10,8 +10,17 @@ describe('notification service', function () {
     };
 
     it('triggers email to be sent', function () {
+        const createEmailer = sinon.stub(emailer, 'createemail');
+        const createEmailer = {sendEmail: sinon.spy()};
+        createEmailer.returns(fakeEmailer);
+
         const notificationService = notifications.buildNotificationService();
-        notificationService.sendNotifications(userProfile, 'Hello');
+        const message = 'Hello';
+        notificationService.sendNotifications(userProfile, message);
+        expect(fakeEmailer.sendEmail.calledOnce).to.be.true;
+        expect(fakeEmailer.sendEmail.getCall(0).args[0]).to.equal(userProfile.emailAddress);
+        expect(fakeEmailer.sendEmail.getCall(0).args[1]).to.equal(message);
+
         // Oops, did we just email somebody?
         // How do we check if anything happened?
     });
